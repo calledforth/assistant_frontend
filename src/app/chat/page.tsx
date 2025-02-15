@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Copy, Loader2, Send } from "lucide-react"
 import { useState, type FormEvent, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { Spinner } from "@/components/Spinner"
+import { CubeLoader } from "@/components/CubeLoader"
 
 export default function Chat() {
   const [messages, setMessages] = useState<{ id: number; role: string; content: string }[]>([])
@@ -154,24 +154,24 @@ export default function Chat() {
   return (
     <div className="h-[calc(100vh-2.5rem)] bg-black text-white antialiased">
       <div className="max-w-4xl mx-auto h-full flex flex-col px-4">
-        <ScrollArea className="flex-1 py-4 px-6 overflow-y-auto"> {/* Added overflow-y-auto */}
-          <div className="space-y-6">
+        <ScrollArea className="flex-1 py-4 overflow-y-auto"> {/* Removed px-6 from ScrollArea */}
+          <div className="space-y-6 px-6"> {/* Added px-6 to inner container */}
             {error && <div className="text-red-500 text-center p-2 bg-red-950/20 rounded">{error}</div>}
             {messages.map((message, index) => (
               <div
                 key={message.id}
                 ref={index === messages.length - 1 ? latestMessageRef : null}
-                className={cn("flex", message.role === "user" ? "justify-end" : "justify-stretch")}
+                className={cn("flex", message.role === "user" ? "justify-end" : "justify-start")}
               >
-                <div className="flex gap-3 max-w-[80%]">
+                <div className="flex gap-3 max-w-[80%] items-start"> {/* Added items-start */}
                   {message.role === "assistant" && (
-                    <div className="w-6 h-6 rounded-full bg-cyan-600/20 flex items-center justify-center">
-                      <Spinner />
+                    <div className="w-6 h-6 rounded-full bg-cyan-600/20 flex items-center justify-center mt-1"> {/* Added mt-1 */}
+                      <CubeLoader size={14} />
                     </div>
                   )}
                   <div
                     className={cn(
-                      "px-4 py-3 rounded-lg text-sm font-arial font-medium leading-relaxed break-words",
+                      "px-4 py-3 rounded-lg text-sm font-arial font-medium leading-relaxed break-words flex-1", // Added flex-1
                       message.role === "user"
                         ? "bg-transparent border border-neutral-700"
                         : "bg-transparent relative group",
