@@ -166,7 +166,7 @@ export default function Chat() {
                 <div className="flex gap-3 max-w-[80%] items-start"> {/* Added items-start */}
                   {message.role === "assistant" && (
                     <div className="w-6 h-6 rounded-full bg-cyan-600/20 flex items-center justify-center mt-1"> {/* Added mt-1 */}
-                      <CubeLoader size={14} />
+                      <CubeLoader size={14} className="opacity-100" />
                     </div>
                   )}
                   <div
