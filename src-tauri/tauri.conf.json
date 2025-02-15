@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "productivity",
+        "title": "assistant",
         "width": 1250,
         "height": 750,
         "resizable": true,
