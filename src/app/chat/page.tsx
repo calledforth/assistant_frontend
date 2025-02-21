@@ -6,7 +6,7 @@ import type React from "react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Copy, Loader2, Send } from "lucide-react"
+import { Copy, Loader2, Send, ArrowDown } from "lucide-react"
 import { useState, type FormEvent, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { CubeLoader } from "@/components/CubeLoader"
@@ -17,31 +17,51 @@ export default function Chat() {
   const [isLoading, setIsLoading] = useState(false)
   const lastMessageRef = useRef<string>("")
   const [error, setError] = useState<string | null>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
   const [copied, setCopied] = useState<number | null>(null)
   const latestMessageRef = useRef<HTMLDivElement>(null)
   const [isStreaming, setIsStreaming] = useState(false)
+  const [showScrollButton, setShowScrollButton] = useState(false)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!latestMessageRef.current || !isLoading) return;
-    
+    if (!latestMessageRef.current || !isLoading) return
+
     const options: ScrollIntoViewOptions = {
       behavior: "smooth",
       block: "end",
-    };
+    }
 
     // Use requestAnimationFrame for smooth scrolling
     const scrollToBottom = () => {
       requestAnimationFrame(() => {
-        latestMessageRef.current?.scrollIntoView(options);
-      });
-    };
+        latestMessageRef.current?.scrollIntoView(options)
+      })
+    }
 
-    scrollToBottom();
-  }, [messages, isLoading]);
+    scrollToBottom()
+  }, [isLoading])
+
+  useEffect(() => {
+    const scrollArea = scrollAreaRef.current
+    if (!scrollArea) return
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = scrollArea
+      setShowScrollButton(scrollHeight - scrollTop > clientHeight + 100)
+    }
+
+    scrollArea.addEventListener("scroll", handleScroll)
+    return () => scrollArea.removeEventListener("scroll", handleScroll)
+  }, [])
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setInput(event.target.value)
+  }
+
+  const scrollToBottom = () => {
+    if (latestMessageRef.current) {
+      latestMessageRef.current.scrollIntoView({ behavior: "smooth" })
+    }
   }
 
   const copyToClipboard = async (text: string, id: number) => {
@@ -131,9 +151,7 @@ export default function Chat() {
         // Update state only once per chunk
         lastMessageRef.current = accumulatedContent
         setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === assistantMessage.id ? { ...msg, content: accumulatedContent } : msg,
-          ),
+          prev.map((msg) => (msg.id === assistantMessage.id ? { ...msg, content: accumulatedContent } : msg)),
         )
       }
     } catch (error) {
@@ -152,54 +170,67 @@ export default function Chat() {
   }
 
   return (
-    <div className="h-[calc(100vh-2.5rem)] bg-black text-white antialiased">
+    <div className="h-[calc(100vh-2.5rem)] bg-zinc-900 text-white antialiased">
       <div className="max-w-4xl mx-auto h-full flex flex-col px-4">
-        <ScrollArea className="flex-1 py-4 overflow-y-auto"> {/* Removed px-6 from ScrollArea */}
-          <div className="space-y-6 px-6"> {/* Added px-6 to inner container */}
+        <ScrollArea className="flex-1 py-4 overflow-y-auto" ref={scrollAreaRef}>
+          {" "}
+          {/* Removed px-6 from ScrollArea */}
+          <div className="space-y-6 px-6">
+            {" "}
+            {/* Added px-6 to inner container */}
             {error && <div className="text-red-500 text-center p-2 bg-red-950/20 rounded">{error}</div>}
             {messages.map((message, index) => (
               <div
                 key={message.id}
                 ref={index === messages.length - 1 ? latestMessageRef : null}
-                className={cn("flex", message.role === "user" ? "justify-end" : "justify-start")}
+                className={cn("flex", message.role === "user" ? "justify-end" : "w-full")}
               >
-                <div className="flex gap-3 max-w-[80%] items-start"> {/* Added items-start */}
+                <div className="flex gap-3 items-start">
                   {message.role === "assistant" && (
-                    <div className="w-6 h-6 rounded-full bg-cyan-600/20 flex items-center justify-center mt-1"> {/* Added mt-1 */}
+                    <div className="w-6 h-6 rounded-full bg-cyan-600/20 flex items-center justify-center mt-1 flex-shrink-0">
                       <CubeLoader size={14} className="opacity-100" />
                     </div>
                   )}
-                  <div
-                    className={cn(
-                      "px-4 py-3 rounded-lg text-sm font-arial font-medium leading-relaxed break-words flex-1", // Added flex-1
-                      message.role === "user"
-                        ? "bg-transparent border border-neutral-700"
-                        : "bg-transparent relative group",
-                    )}
-                  >
-                    <MarkdownMessage 
-                      content={message.content} 
+                  <div className="flex-grow">
+                    <div
                       className={cn(
-                        "prose prose-invert max-w-none",
-                        message.role === "user" && "prose-p:mb-0"
+                        "px-4 py-3 rounded-lg text-sm font-arial font-medium leading-relaxed break-words",
+                        message.role === "user" ? "bg-zinc-800" : "bg-transparent",
                       )}
-                    />
+                    >
+                      <MarkdownMessage
+                        content={message.content}
+                        className={cn("prose prose-invert max-w-none", message.role === "user" && "prose-p:mb-0")}
+                      />
+                    </div>
                     {message.role === "assistant" && message.content && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="absolute -right-12 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => copyToClipboard(message.content, message.id)}
-                      >
-                        <Copy className={cn("h-4 w-4", copied === message.id && "text-green-500")} />
-                        <span className="sr-only">Copy message</span>
-                      </Button>
+                      <div className="mt-2 flex justify-start">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
+                          onClick={() => copyToClipboard(message.content, message.id)}
+                        >
+                          <Copy className={cn("h-4 w-4 mr-2", copied === message.id && "text-green-500")} />
+                          {copied === message.id ? "Copied!" : "Copy"}
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
             ))}
           </div>
+          {showScrollButton && (
+            <Button
+              size="icon"
+              variant="outline"
+              className="fixed bottom-20 right-8 rounded-full bg-zinc-800 text-zinc-100 hover:bg-zinc-700"
+              onClick={scrollToBottom}
+            >
+              <ArrowDown className="h-4 w-4" />
+            </Button>
+          )}
         </ScrollArea>
 
         <form onSubmit={handleSubmit} className="py-4 flex gap-2 relative">
@@ -217,11 +248,7 @@ export default function Chat() {
               disabled={isLoading || isStreaming}
               className="absolute right-1 top-1 h-8 w-8 rounded-full bg-transparent hover:bg-neutral-700/50"
             >
-              {isLoading || isStreaming ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
+              {isLoading || isStreaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               <span className="sr-only">Send message</span>
             </Button>
           </div>

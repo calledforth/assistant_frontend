@@ -12,11 +12,10 @@ export default {
 			fontFamily: {
 				raleway: ["Raleway", "sans-serif"],
 				Roboto: ["Roboto", "sans-serif"],
-				geist: ["Geist", "sans-serif"],
-				geistMono: ["Geist_Mono", "monospace"],
 				workSans: ["Work Sans", "sans-serif"],
 				arial : ["Arial", "sans-serif"],
-				ydgothic: ["YD Gothic 500", "sans-serif"],
+				helveticaneue: ["Helvetica Neue", "sans-serif"],
+				modernSans: ["Modern Sans Serif", "sans-serif"],
 			},
 			colors: {
   			background: 'hsl(var(--background))',
