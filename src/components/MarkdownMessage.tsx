@@ -51,3 +51,4 @@ export function MarkdownMessage({ content, className }: MarkdownMessageProps) {
     </ReactMarkdown>
   )
 }
+

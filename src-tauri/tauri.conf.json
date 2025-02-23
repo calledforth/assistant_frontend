@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "assistant",
+        "title": "main",
         "width": 1250,
         "height": 750,
         "resizable": true,
@@ -28,11 +28,12 @@
     "active": true,
     "targets": "all",
     "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
+      "icons/icon/icon.ico",
+      "icons/icon/icon_512.png",
+      "icons/icon/icon_256.png",
+      "icons/icon/icon_128.png",
+      "icons/icon/icon_64.png",
+      "icons/icon/icon_32.png"    
     ]
-  }
+  }   
 }

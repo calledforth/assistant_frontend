@@ -24,22 +24,24 @@ export default function Chat() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!latestMessageRef.current || !isLoading) return
+    if (!latestMessageRef.current) return
 
     const options: ScrollIntoViewOptions = {
       behavior: "smooth",
       block: "end",
     }
 
-    // Use requestAnimationFrame for smooth scrolling
     const scrollToBottom = () => {
       requestAnimationFrame(() => {
         latestMessageRef.current?.scrollIntoView(options)
       })
     }
 
-    scrollToBottom()
-  }, [isLoading])
+    // Scroll when streaming or loading changes
+    if (isStreaming || isLoading) {
+      scrollToBottom()
+    }
+  }, [isLoading, isStreaming, messages]) // Add messages as dependency to catch updates
 
   useEffect(() => {
     const scrollArea = scrollAreaRef.current
@@ -138,6 +140,13 @@ export default function Chat() {
             const jsonData = JSON.parse(line)
             if (jsonData.message) {
               accumulatedContent += jsonData.message
+              // Update messages immediately for each chunk
+              lastMessageRef.current = accumulatedContent
+              setMessages((prev) =>
+                prev.map((msg) => 
+                  msg.id === assistantMessage.id ? { ...msg, content: accumulatedContent } : msg
+                )
+              )
             }
             if (jsonData.error) {
               setError(jsonData.error)
@@ -147,12 +156,6 @@ export default function Chat() {
             console.error("Error parsing JSON:", parseError)
           }
         }
-
-        // Update state only once per chunk
-        lastMessageRef.current = accumulatedContent
-        setMessages((prev) =>
-          prev.map((msg) => (msg.id === assistantMessage.id ? { ...msg, content: accumulatedContent } : msg)),
-        )
       }
     } catch (error) {
       console.error("Error:", error)
@@ -170,7 +173,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="h-[calc(100vh-2.5rem)] bg-zinc-900 text-white antialiased">
+    <div className="h-[calc(100vh-2.5rem)] bg-neutral-900 text-white antialiased">
       <div className="max-w-4xl mx-auto h-full flex flex-col px-4">
         <ScrollArea className="flex-1 py-4 overflow-y-auto" ref={scrollAreaRef}>
           {" "}
@@ -194,10 +197,12 @@ export default function Chat() {
                   <div className="flex-grow">
                     <div
                       className={cn(
-                        "px-4 py-3 rounded-lg text-sm font-arial font-medium leading-relaxed break-words",
+                        "px-4 py-3 rounded-lg text-sm font-modernSans font-medium leading-relaxed break-words",
                         message.role === "user" ? "bg-zinc-800" : "bg-transparent",
                       )}
                     >
+
+
                       <MarkdownMessage
                         content={message.content}
                         className={cn("prose prose-invert max-w-none", message.role === "user" && "prose-p:mb-0")}
@@ -212,7 +217,7 @@ export default function Chat() {
                           onClick={() => copyToClipboard(message.content, message.id)}
                         >
                           <Copy className={cn("h-4 w-4 mr-2", copied === message.id && "text-green-500")} />
-                          {copied === message.id ? "Copied!" : "Copy"}
+                          {copied === message.id ? "Copied!" : ""}
                         </Button>
                       </div>
                     )}
