@@ -18,7 +18,7 @@ pub fn run() {
 
             // Define menu items
             let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let toggle_i = MenuItem::with_id(app, "toggle", "Toggle Window", true, None::<&str>)?; // Renamed to "Toggle Window"
+            let toggle_i = MenuItem::with_id(app, "toggle", "Toggle Window", true, Some("Ctrl+`"))?; // Renamed to "Toggle Window"
 
             // Create the menu with both items
             let menu = Menu::with_items(app, &[&quit_i, &toggle_i])?;

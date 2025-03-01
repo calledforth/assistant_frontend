@@ -7,7 +7,7 @@ export function TitleBar() {
   const appWindow = getCurrentWindow()
 
   return (
-    <div data-tauri-drag-region className="flex items-center justify-between bg-black text-white h-10 px-4 fixed top-0 left-0 right-0 z-50">
+    <div data-tauri-drag-region className="flex items-center justify-between bg-neutral-900 text-white h-6 px-4 fixed top-0 left-0 right-0 z-50">
       <div className="flex items-center space-x-2">
         <span className="font-semibold">Sei</span>
       </div>
