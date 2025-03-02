@@ -317,7 +317,7 @@ export default function Chat() {
         )}
       </ScrollArea>
 
-      <form onSubmit={handleSubmit} className="py-4 px-6 flex gap-2 relative border-t border-white/10">
+      <form onSubmit={handleSubmit} className="py-4 px-6 flex gap-2 relative">
         <div className="relative flex-1 group">
           <Input
             value={input}

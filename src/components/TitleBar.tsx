@@ -1,10 +1,10 @@
 "use client"
 
-import { getCurrentWindow } from "@tauri-apps/api/window"
+import { Window } from "@tauri-apps/api/window"
 import { Minus, Square, X } from "lucide-react"
 
 export function TitleBar() {
-  const appWindow = getCurrentWindow()
+  const appWindow = new Window("main");
 
   return (
     <div data-tauri-drag-region className="flex items-center justify-between bg-neutral-900 text-white h-6 px-4 fixed top-0 left-0 right-0 z-50">
