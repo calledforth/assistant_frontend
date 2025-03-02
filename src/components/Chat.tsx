@@ -312,7 +312,7 @@ export default function Chat() {
             className="fixed bottom-20 right-8 rounded-full bg-white/10 text-zinc-100 hover:bg-white/20 backdrop-blur-sm border border-white/10"
             onClick={scrollToBottom}
           >
-            <ArrowDown className="h-4 w-4" />
+     <ArrowDown className="h-4 w-4" />
           </Button>
         )}
       </ScrollArea>
@@ -332,7 +332,7 @@ export default function Chat() {
             disabled={isLoading || isStreaming}
             className="absolute right-1 top-1 h-8 w-8 rounded-full border-white/10 bg-white/10 hover:bg-white/20 backdrop-blur-sm"
           >
-            {isLoading || isStreaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+           {isLoading || isStreaming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             <span className="sr-only">Send message</span>
           </Button>
         </div>
