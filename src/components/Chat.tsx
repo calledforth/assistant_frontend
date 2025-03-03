@@ -1,12 +1,13 @@
 "use client"
 
 import { MarkdownMessage } from "@/components/MarkdownMessage"
+import { ThinkingProcess } from "@/components/ThinkingProcess"
 import type React from "react"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Copy, Loader2, Send, ArrowDown, Brain } from "lucide-react"
+import { Copy, Loader2, Send, ArrowDown } from "lucide-react"
 import { useState, type FormEvent, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
@@ -48,7 +49,14 @@ function processStreamedContent(content: string): { thinking: string | null; res
 }
 
 export default function Chat() {
-  const [messages, setMessages] = useState<{ id: number; role: string; content: string; thinking?: string | null; isThinkingComplete?: boolean }[]>([])
+  const [messages, setMessages] = useState<{ 
+    id: number; 
+    role: string; 
+    content: string; 
+    thinking?: string | null; 
+    isThinkingComplete?: boolean;
+    isThinkingVisible?: boolean;
+  }[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const lastMessageRef = useRef<string>("")
@@ -112,6 +120,16 @@ export default function Chat() {
     }
   }
 
+  const toggleThinkingVisibility = (messageId: number) => {
+    setMessages(prev => 
+      prev.map(msg => 
+        msg.id === messageId 
+          ? { ...msg, isThinkingVisible: !msg.isThinkingVisible } 
+          : msg
+      )
+    );
+  };
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     if (input.trim() === "" || isLoading) return
@@ -133,6 +151,7 @@ export default function Chat() {
       id: messages.length + 2,
       role: "assistant",
       content: "",
+      isThinkingVisible: true, // Default to showing thinking section
     }
     setMessages((prev) => [...prev, assistantMessage])
 
@@ -220,7 +239,15 @@ export default function Chat() {
     }
   }
 
-  const renderMessageContent = (message: { role: string; content: string; thinking?: string | null; response?: string; isThinkingComplete?: boolean }) => {
+  const renderMessageContent = (message: { 
+    id: number; 
+    role: string; 
+    content: string; 
+    thinking?: string | null; 
+    response?: string; 
+    isThinkingComplete?: boolean;
+    isThinkingVisible?: boolean;
+  }) => {
     if (message.role === "user") {
       return (
         <MarkdownMessage
@@ -233,22 +260,16 @@ export default function Chat() {
     // Use the pre-processed thinking and response values directly
     const displayThinking = message.thinking || null;
     const displayResponse = message.response || '';
+    const isThinkingVisible = message.isThinkingVisible !== false; // Default to visible if undefined
 
     return (
       <>
         {displayThinking && (
-          <div className="mb-3 bg-black backdrop-blur-sm rounded-lg p-4 border border-white/10 shadow-inner">
-            <div className="flex items-center gap-2 mb-2 text-xs font-medium text-white/60">
-              <Brain className="h-4 w-4" /> 
-              <span>Thinking process</span>
-            </div>
-            <div className="text-white/80 text-xs leading-relaxed">
-              <MarkdownMessage
-                content={displayThinking}
-                className="prose prose-invert prose-sm max-w-none prose-pre:bg-black/30 prose-pre:text-xs"
-              />
-            </div>
-          </div>
+          <ThinkingProcess 
+            content={displayThinking}
+            isVisible={isThinkingVisible}
+            onToggleVisibility={() => toggleThinkingVisibility(message.id)}
+          />
         )}
         {displayResponse && (
           <MarkdownMessage
@@ -312,7 +333,7 @@ export default function Chat() {
             className="fixed bottom-20 right-8 rounded-full bg-white/10 text-zinc-100 hover:bg-white/20 backdrop-blur-sm border border-white/10"
             onClick={scrollToBottom}
           >
-     <ArrowDown className="h-4 w-4" />
+            <ArrowDown className="h-4 w-4" />
           </Button>
         )}
       </ScrollArea>
