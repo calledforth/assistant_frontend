@@ -268,7 +268,7 @@ export default function Chat() {
           <ThinkingProcess 
             content={displayThinking}
             isVisible={isThinkingVisible}
-            onToggleVisibility={() => toggleThinkingVisibility(message.id)}
+                        onToggleVisibility={() => toggleThinkingVisibility(message.id)}
           />
         )}
         {displayResponse && (
@@ -303,7 +303,7 @@ export default function Chat() {
               ) : (
                 <div className="w-full">
                   <div 
-                    className="px-4 py-3 rounded-lg text-sm font-medium leading-relaxed break-words w-full border border-white/5 bg-blue-950/25 backdrop-blur-sm"
+                    className="px-4 py-3 rounded-lg text-sm font-medium leading-relaxed break-words w-full border border-white/10 bg-blue-500/10 backdrop-blur-lg shadow-sm text-white"
                   >
                     {renderMessageContent(message)}
                   </div>
