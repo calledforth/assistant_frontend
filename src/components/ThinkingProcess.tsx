@@ -17,13 +17,15 @@ export function ThinkingProcess({
   isThinkingComplete = false,
   onToggleVisibility 
 }: ThinkingProcessProps) { 
-  // Local visibility state with default value depending on thinking completion status
+  // Local visibility state - default to visible when thinking, hidden when complete
   const [localIsVisible, setLocalIsVisible] = useState(!isThinkingComplete);
 
-  // If thinking completes, update local visibility if we're using it
+  // When thinking completes, update local visibility
   useEffect(() => {
-    if (isThinkingComplete && !onToggleVisibility) {
-      setLocalIsVisible(false);
+    if (isThinkingComplete) {
+      if (!onToggleVisibility) {
+        setLocalIsVisible(false);
+      }
     }
   }, [isThinkingComplete, onToggleVisibility]);
 
@@ -39,7 +41,7 @@ export function ThinkingProcess({
   }
 
   return ( 
-    <div className="mb-3 bg-black backdrop-blur-md rounded-lg p-4 border border-white/5 shadow-inner"> 
+    <div className="rounded-lg p-4 bordershadow-inner"> 
       <div className="flex items-center gap-2 mb-2"> 
         <div className="flex items-center gap-2 text-xs font-medium text-white/60"> 
           <Brain className="h-4 w-4" /> 
@@ -48,38 +50,36 @@ export function ThinkingProcess({
         <Button 
           variant="ghost" 
           size="sm" 
-          className="h-5 w-5 p-0 rounded-full hover:bg-white/10 ml-1" 
+          className="h-5 w-5 p-0 rounded-full hover:bg-white/10 ml-1 transition-all duration-200" 
           onClick={handleToggle} 
         > 
           {visible ? ( 
-            <ChevronUp className="h-3.5 w-3.5 text-white/60" /> 
+            <ChevronUp className="h-3.5 w-3.5 text-white/60 transition-transform duration-200" /> 
           ) : ( 
-            <ChevronDown className="h-3.5 w-3.5 text-white/60" /> 
+            <ChevronDown className="h-3.5 w-3.5 text-white/60 transition-transform duration-200" /> 
           )} 
         </Button>
-        
-        {isThinkingComplete && (
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/10 text-white/40 ml-auto">
-            Complete
-          </span>
-        )}
+
       </div>
 
-      {visible && (
-        <div className="text-base leading-relaxed transition-all overflow-hidden">
-          <div className={cn(
-            "font-modernSans",
-            isThinkingComplete 
-              ? "bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50" 
-              : "text-white/80"
-          )}>
-            <MarkdownMessage
-              content={content}
-              className="prose prose-invert prose-sm max-w-none prose-pre:bg-black/30 prose-pre:text-xs"
-            />
-          </div>
+      <div 
+        className={cn(
+          "overflow-hidden transition-all duration-300 ease-in-out",
+          visible ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+        )}
+      >
+        <div className={cn(
+          "font-workSans text-xs leading-relaxed pt-1",
+          isThinkingComplete 
+            ? "bg-clip-text text-transparent" 
+            : "text-white/40"
+        )}>
+          <MarkdownMessage
+            content={content}
+            className="prose prose-invert prose-sm max-w-none prose-pre:bg-black/30 prose-pre:text-xs text-white/50"
+          />
         </div>
-      )}
+      </div>
     </div>
   )
 }

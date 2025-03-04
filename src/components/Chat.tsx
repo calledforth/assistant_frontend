@@ -180,7 +180,7 @@ export default function Chat() {
       while (true) {
         const { done, value } = await reader.read()
         if (done) {
-          setIsStreaming(false)
+         setIsStreaming(false)
           break
         }
 
@@ -268,7 +268,7 @@ export default function Chat() {
           <ThinkingProcess 
             content={displayThinking}
             isVisible={isThinkingVisible}
-                        onToggleVisibility={() => toggleThinkingVisibility(message.id)}
+            onToggleVisibility={() => toggleThinkingVisibility(message.id)}
           />
         )}
         {displayResponse && (
@@ -282,7 +282,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="h-[calc(100vh-2.5rem)] w-[1000px] text-white antialiased rounded-xl shadow-lg border border-white/10 bg-black backdrop-blur-md flex flex-col">
+    <div className="h-[calc(100vh-2.5rem)] w-[1000px] text-white antialiased rounded-xl shadow-lg bg-black backdrop-blur-md flex flex-col">
       <ScrollArea className="flex-1 py-4 overflow-y-auto" ref={scrollAreaRef}>
         <div className="space-y-6 px-6">
           {error && <div className="text-red-500 text-center p-2 bg-red-950/20 rounded">{error}</div>}
@@ -303,7 +303,7 @@ export default function Chat() {
               ) : (
                 <div className="w-full">
                   <div 
-                    className="px-4 py-3 rounded-lg text-sm font-medium leading-relaxed break-words w-full border border-white/10 bg-blue-500/10 backdrop-blur-lg shadow-sm text-white"
+                    className="px-4 py-3 rounded-lg text-sm font-medium leading-relaxed break-words w-full border border-white/5 bg-blue-950/25 backdrop-blur-sm"
                   >
                     {renderMessageContent(message)}
                   </div>
